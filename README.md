@@ -1,7 +1,7 @@
 # fio-stac
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/10407788/111794250-696da080-889c-11eb-9043-5bdc3aadb8bf.png" alt="fio-stac"></a>
+  <img width="500" src="https://github.com/developmentseed/fio-stac/assets/10407788/ae4caa77-83fb-490e-a05c-55da1418f692" alt="fio-stac"></a>
 </p>
 <p align="center">
   <em>Create STAC Items from vector datasets.</em>
@@ -32,7 +32,7 @@
 
 ---
 
-`fio-stac` is a simple [rasterio](https://github.com/mapbox/rasterio) plugin for creating valid STAC items from a raster dataset. The library is built on top of [pystac](https://github.com/stac-utils/pystac) to make sure we follow the STAC specification.
+`fio-stac` is a simple [fiona](https://github.com/Toblerity/Fiona) plugin for creating valid STAC items from a vector dataset. The library is built on top of [pystac](https://github.com/stac-utils/pystac) to make sure we follow the STAC specification.
 
 ## Installation
 
