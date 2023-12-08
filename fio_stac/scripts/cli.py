@@ -26,7 +26,7 @@ def _cb_key_val(ctx, param, value):
 
 
 @click.command()
-@click.argument('input', required=True)
+@click.argument("input", required=True)
 @click.option(
     "--datetime",
     "-d",

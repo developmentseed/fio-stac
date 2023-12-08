@@ -7,11 +7,11 @@ import warnings
 from contextlib import ExitStack
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+import fiona
 import numpy
 import pystac
-import fiona
-from fiona.transform import transform_geom
 from fiona.model import to_dict
+from fiona.transform import transform_geom
 from pystac.utils import str_to_datetime
 
 PROJECTION_EXT_VERSION = "v1.1.0"
@@ -65,18 +65,20 @@ def get_dataset_geom(
             }
 
         # 3. Reproject the geometry to "epsg:4326"
-        geom = to_dict(transform_geom(
-            src_dst.crs,
-            EPSG_4326,
-            geom,
-            precision=precision,
-            antimeridian_cutting=True,
-        ))
+        geom = to_dict(
+            transform_geom(
+                src_dst.crs,
+                EPSG_4326,
+                geom,
+                precision=precision,
+                antimeridian_cutting=True,
+            )
+        )
 
         xs = []
         ys = []
         features = geom.get("features") or [geom]
-        for j, feat in enumerate(features):
+        for _j, feat in enumerate(features):
             w, s, e, n = fiona.bounds(feat)
             xs.extend([w, e])
             ys.extend([s, n])
@@ -93,9 +95,7 @@ def get_dataset_geom(
     return {"bbox": list(bbox), "footprint": geom}
 
 
-def get_projection_info(
-    src_dst: fiona.Collection
-) -> Dict:
+def get_projection_info(src_dst: fiona.Collection) -> Dict:
     """Get projection metadata.
 
     The STAC projection extension allows for three different ways to describe the coordinate reference system
@@ -152,7 +152,7 @@ def get_media_type(src_dst: fiona.Collection) -> Optional[str]:
 
     try:
         return pystac.MediaType[driver.upper()]
-    except:
+    except:  # noqa
         pass
 
     warnings.warn("Could not determine the media type from GDAL driver.")
