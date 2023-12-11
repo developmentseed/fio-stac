@@ -351,4 +351,4 @@ The CLI can be run as is, just by passing a `source` vector data. You can also u
 
 # API
 
-see: [api](api/rio_stac/stac.md)
+see: [api](api/fio_stac/stac.md)
