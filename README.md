@@ -125,7 +125,27 @@ $ pip install git+http://github.com/developmentseed/fio-stac
       }
     },
     "proj:wkt2": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
-    "datetime": "2023-12-08T20:32:26.343189Z"
+    "vector:layers": {
+      "ne_10m_roads_north_america": {
+        "properties": {
+          "prefix": "str:5",
+          "number": "str:5",
+          "class": "str:10",
+          "type": "str:12",
+          "divided": "str:10",
+          "country": "str:25",
+          "state": "str:25",
+          "note": "str:100",
+          "scalerank": "int:4",
+          "uident": "int:9",
+          "length": "float:13.11",
+          "rank": "int:4",
+          "continent": "str:50"
+        },
+        "geometry": "LineString"
+      }
+    },
+    "datetime": "2023-12-11T15:21:15.054810Z"
   },
   "geometry": {
     "coordinates": [
@@ -156,8 +176,8 @@ $ pip install git+http://github.com/developmentseed/fio-stac
   },
   "links": [],
   "assets": {
-    "asset": {
-      "href": "/vsizip/vsicurl/https://naciscdn.org/naturalearth/10m/cultural/ne_10m_roads_north_america.zip",
+    "ne_10m_roads_north_america": {
+      "href": "zip+https://naciscdn.org/naturalearth/10m/cultural/ne_10m_roads_north_america.zip",
       "roles": []
     }
   },

@@ -167,7 +167,7 @@ def get_media_type(src_dst: fiona.Collection) -> Optional[str]:
 
 
 def create_stac_item(
-    source: Union[str, fiona.Collection],
+    source: str,
     input_datetime: Optional[datetime.datetime] = None,
     extensions: Optional[List[str]] = None,
     collection: Optional[str] = None,
@@ -186,7 +186,7 @@ def create_stac_item(
     """Create a Stac Item.
 
     Args:
-        source (str or opened rasterio dataset): input path or rasterio dataset.
+        source (str): input path.
         input_datetime (datetime.datetime, optional): datetime associated with the item.
         extensions (list of str): input list of extensions to use in the item.
         collection (str, optional): name of collection the item belongs to.
@@ -210,13 +210,11 @@ def create_stac_item(
     extensions = extensions or []
     asset_roles = asset_roles or []
 
-    with ExitStack() as ctx:
-        if isinstance(source, fiona.Collection):
-            input_path = source.path
-            src_dst = source
-        else:
-            input_path = source
-            src_dst = ctx.enter_context(fiona.open(source))
+    layers = fiona.listlayers(source)
+
+    with fiona.open(source) as src_dst:
+        item_id = id or src_dst.name
+        asset_name = asset_name or src_dst.name
 
         dataset_geom = get_dataset_geom(
             src_dst,
@@ -229,7 +227,7 @@ def create_stac_item(
         )
 
         if "start_datetime" not in properties and "end_datetime" not in properties:
-            input_datetime = datetime.datetime.utcnow()
+            input_datetime = input_datetime or datetime.datetime.utcnow()
 
         # add projection properties
         if with_proj:
@@ -244,9 +242,17 @@ def create_stac_item(
                 }
             )
 
+    layer_schemas = {}
+    for layer in layers:
+        with fiona.open(source, layer=layer) as lyr_dst:
+            schema = lyr_dst.schema
+            layer_schemas.update({layer: schema})
+
+    properties.update({"vector:layers": layer_schemas})
+
     # item
     item = pystac.Item(
-        id=id or src_dst.name,
+        id=item_id,
         geometry=dataset_geom["footprint"],
         bbox=dataset_geom["bbox"],
         collection=collection,
@@ -272,9 +278,9 @@ def create_stac_item(
 
     else:
         item.add_asset(
-            key=asset_name or src_dst.name,
+            key=asset_name,
             asset=pystac.Asset(
-                href=asset_href or input_path,
+                href=asset_href or source,
                 media_type=media_type,
                 roles=asset_roles,
             ),
