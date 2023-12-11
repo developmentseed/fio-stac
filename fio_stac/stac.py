@@ -248,8 +248,6 @@ def create_stac_item(
             schema = lyr_dst.schema
             layer_schemas.update({layer: schema})
 
-    properties.update({"vector:layers": layer_schemas})
-
     # item
     item = pystac.Item(
         id=item_id,
@@ -283,6 +281,7 @@ def create_stac_item(
                 href=asset_href or source,
                 media_type=media_type,
                 roles=asset_roles,
+                extra_fields={"vector:layers": layer_schemas},
             ),
         )
 
