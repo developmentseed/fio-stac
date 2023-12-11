@@ -3,7 +3,6 @@
 import datetime
 import os
 
-import pystac
 import pytest
 
 from fio_stac.stac import create_stac_item

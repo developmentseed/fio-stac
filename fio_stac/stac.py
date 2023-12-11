@@ -1,22 +1,24 @@
 """Create STAC Item from a vector dataset."""
 
 import datetime
-import math
-import os
 import warnings
 from contextlib import ExitStack
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import fiona
-import numpy
 import pystac
 from fiona.model import to_dict
 from fiona.transform import transform_geom
-from pystac.utils import str_to_datetime
 
 PROJECTION_EXT_VERSION = "v1.1.0"
 
 EPSG_4326 = fiona.crs.CRS.from_epsg(4326)
+
+
+try:
+    import numpy
+except ImportError:  # pragma: nocover
+    rioxarray = None  # type: ignore
 
 
 def bbox_to_geom(bbox: Tuple[float, float, float, float]) -> Dict:
@@ -54,7 +56,7 @@ def get_dataset_geom(
         geom = bbox_to_geom(bounds)
 
         # 2. Densify the Polygon geometry
-        if src_dst.crs != EPSG_4326 and densify_pts:
+        if src_dst.crs != EPSG_4326 and densify_pts and numpy is not None:
             # Derived from code found at
             # https://stackoverflow.com/questions/64995977/generating-equidistance-points-along-the-boundary-of-a-polygon-but-cw-ccw
             coordinates = numpy.asarray(geom["coordinates"][0])

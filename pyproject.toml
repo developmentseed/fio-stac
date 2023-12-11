@@ -24,6 +24,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+numpy = [
+    "numpy",
+]
 test = [
     "pytest",
     "pytest-cov",
