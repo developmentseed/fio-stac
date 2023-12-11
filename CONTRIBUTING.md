@@ -13,7 +13,7 @@ $ pip install -e .["test","dev"]
 You can then run the tests with the following command:
 
 ```sh
-python -m pytest --cov rio_stac --cov-report term-missing
+python -m pytest --cov fio_stac --cov-report term-missing
 ```
 
 **pre-commit**

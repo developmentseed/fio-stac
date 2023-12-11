@@ -44,9 +44,14 @@ def get_dataset_geom(
     if densify_pts < 0:
         raise ValueError("`densify_pts` must be positive")
 
-    if src_dst.crs is not None:
+    try:
+        bounds = src_dst.bounds
+    except fiona.errors.DriverError:
+        bounds = None
+
+    if src_dst.crs and bounds is not None:
         # 1. Create Polygon from raster bounds
-        geom = bbox_to_geom(src_dst.bounds)
+        geom = bbox_to_geom(bounds)
 
         # 2. Densify the Polygon geometry
         if src_dst.crs != EPSG_4326 and densify_pts:
@@ -168,7 +173,7 @@ def create_stac_item(
     properties: Optional[Dict] = None,
     id: Optional[str] = None,
     assets: Optional[Dict[str, pystac.Asset]] = None,
-    asset_name: str = "asset",
+    asset_name: Optional[str] = None,
     asset_roles: Optional[List[str]] = None,
     asset_media_type: Optional[Union[str, pystac.MediaType]] = "auto",
     asset_href: Optional[str] = None,
@@ -192,7 +197,6 @@ def create_stac_item(
         asset_media_type (str or pystac.MediaType, optional): asset's media type.
         asset_href (str, optional): asset's URI (default to input path).
         with_proj (bool): Add the `projection` extension and properties (default to False).
-        raster_max_size (int): Limit array size from which to get the raster statistics. Defaults to 1024.
         geom_densify_pts (int): Number of points to add to each edge to account for nonlinear edges transformation (Note: GDAL uses 21).
         geom_precision (int): If >= 0, geometry coordinates will be rounded to this number of decimal.
 
@@ -206,8 +210,10 @@ def create_stac_item(
 
     with ExitStack() as ctx:
         if isinstance(source, fiona.Collection):
+            input_path = source.path
             src_dst = source
         else:
+            input_path = source
             src_dst = ctx.enter_context(fiona.open(source))
 
         dataset_geom = get_dataset_geom(
@@ -264,9 +270,9 @@ def create_stac_item(
 
     else:
         item.add_asset(
-            key=asset_name,
+            key=asset_name or src_dst.name,
             asset=pystac.Asset(
-                href=asset_href or src_dst.path,
+                href=asset_href or input_path,
                 media_type=media_type,
                 roles=asset_roles,
             ),

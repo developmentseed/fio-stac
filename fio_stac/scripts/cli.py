@@ -58,7 +58,6 @@ def _cb_key_val(ctx, param, value):
     "--asset-name",
     "-n",
     type=str,
-    default="asset",
     help="Asset name.",
     show_default=True,
 )
